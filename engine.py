@@ -12,6 +12,10 @@ def main():
 	# map dimensions
 	MAP_WIDTH = 80
 	MAP_HEIGHT = 45
+	# room dimensions and count
+	ROOM_MAX_SIZE = 10
+	ROOM_MIN_SIZE = 6
+	MAX_ROOMS = 30
 	# define tile colors
 	colors = {
 		'dark_wall': libtcod.Color(0, 0, 100),
@@ -31,6 +35,7 @@ def main():
 	con = libtcod.console_new(SCREEN_WIDTH, SCREEN_HEIGHT)
 	# create game map
 	game_map = GameMap(MAP_WIDTH, MAP_HEIGHT)
+	game_map.make_map(MAX_ROOMS, ROOM_MIN_SIZE, ROOM_MAX_SIZE, MAP_WIDTH, MAP_HEIGHT, player)
 	# create keybord input
 	key = libtcod.Key()
 	# create mouse input
