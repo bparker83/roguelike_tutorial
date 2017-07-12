@@ -1,5 +1,7 @@
+import libtcodpy as libtcod
 from random import randint
 
+from entity import Entity
 from map_objects.tile import Tile
 from map_objects.rectangle import Rect
 
