@@ -1,6 +1,6 @@
 import libtcodpy as libtcod
 
-from entity import Entity
+from entity import Entity, get_blocking_entities_at_location
 from fov_functions import initialize_fov, recompute_fov
 from game_states import GameStates
 from input_handlers import handle_keys
