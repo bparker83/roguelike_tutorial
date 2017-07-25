@@ -4,6 +4,7 @@ from components.fighter import Fighter
 from death_functions import kill_monster, kill_player
 from entity import Entity, get_blocking_entities_at_location
 from fov_functions import initialize_fov, recompute_fov
+from game_messages import Message, MessageLog
 from game_states import GameStates
 from input_handlers import handle_keys
 from render_functions import clear_all, render_all, RenderOrder
@@ -13,9 +14,17 @@ def main():
 	# screen dimensions
 	SCREEN_WIDTH = 80
 	SCREEN_HEIGHT = 50
+	# hp panel dimensions
+	BAR_WIDTH = 20
+	PANEL_HEIGHT = 7
+	PANEL_Y = SCREEN_HEIGHT - PANEL_HEIGHT
+	# message panel dimensions
+	MESSAGE_X = BAR_WIDTH * 2
+	MESSAGE_WIDTH = SCREEN_WIDTH - BAR_WIDTH - 2
+	MESSAGE_HEIGHT = PANEL_HEIGHT - 1
 	# map dimensions
 	MAP_WIDTH = 80
-	MAP_HEIGHT = 45
+	MAP_HEIGHT = 43
 	# room dimensions and count
 	ROOM_MAX_SIZE = 10
 	ROOM_MIN_SIZE = 6
@@ -44,6 +53,8 @@ def main():
 	libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'libtcod tutorial revised', False)
 	# create console
 	con = libtcod.console_new(SCREEN_WIDTH, SCREEN_HEIGHT)
+	# create hp panel
+	panel = libtcod.console_new(SCREEN_WIDTH, PANEL_HEIGHT)
 	# create game map
 	game_map = GameMap(MAP_WIDTH, MAP_HEIGHT)
 	game_map.make_map(MAX_ROOMS, ROOM_MIN_SIZE, ROOM_MAX_SIZE, MAP_WIDTH, MAP_HEIGHT, player, entities, MAX_MONSTERS_PER_ROOM)
@@ -51,6 +62,8 @@ def main():
 	fov_recompute = True
 	# create field of view map
 	fov_map = initialize_fov(game_map)
+	# create message log
+	message_log = MessageLog(MESSAGE_X, MESSAGE_WIDTH, MESSAGE_HEIGHT)
 	# create keybord input
 	key = libtcod.Key()
 	# create mouse input
@@ -60,12 +73,13 @@ def main():
 	# game loop
 	while not libtcod.console_is_window_closed():
 		# listen for events
-		libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS, key, mouse)
+		libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
 		# recompute field of view
 		if fov_recompute:
 			recompute_fov(fov_map, player.x, player.y, FOV_RADIUS, FOV_LIGHT_WALLS, FOV_ALGORITHM)
 		# render entities
-		render_all(con, entities, player, game_map, fov_map, fov_recompute, SCREEN_WIDTH, SCREEN_HEIGHT, colors)
+		render_all(con, panel, entities, player, game_map, fov_map, fov_recompute, message_log, SCREEN_WIDTH,
+					SCREEN_HEIGHT, BAR_WIDTH, PANEL_HEIGHT, PANEL_Y, mouse, colors)
 		# reset field of view recompute trigger
 		fov_recompute = False
 		# update screen
@@ -110,7 +124,7 @@ def main():
 			dead_entity = player_turn_result.get('dead')
 			
 			if message:
-				print(message)
+				message_log.add_message(message)
 				
 			if dead_entity:
 				if dead_entity == player:
@@ -118,7 +132,7 @@ def main():
 				else:
 					message = kill_monster(dead_entity)
 					
-				print(message)
+				message_log.add_message(message)
 			
 		if game_state == GameStates.ENEMY_TURN:
 			for entity in entities:
@@ -130,7 +144,7 @@ def main():
 						dead_entity = enemy_turn_result.get('dead')
 						
 						if message:
-							print(message)
+							message_log.add_message(message)
 							
 						if dead_entity:
 							if dead_entity == player:
@@ -138,7 +152,7 @@ def main():
 							else:
 								message = kill_monster(dead_entity)
 							
-							print(message)
+							message_log.add_message(message)
 						
 							if game_state == GameStates.PLAYER_DEAD:
 								break
