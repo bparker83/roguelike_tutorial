@@ -29,3 +29,4 @@ class Fighter:
 				self.owner.name.capitalize(), target.name)})
 				
 		return results
+		
