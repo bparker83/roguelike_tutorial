@@ -38,7 +38,7 @@ class Entity:
 		self.x += dx
 		self.y += dy
 		
-	def move_towards(self, target_x, target_y, game_map, entities, name):
+	def move_towards(self, target_x, target_y, game_map, entities):
 		dx = target_x - self.x
 		dy = target_y - self.y
 		distance = math.sqrt(dx ** 2 + dy ** 2)
@@ -83,9 +83,12 @@ class Entity:
 		else:
 			# Keep the old move function as a backup so that if there are no paths (for example another monster blocks a corridor)
 			# it will still try to move towards the player (closer to the corridor opening)
-			self.move_towards(target.x, target.y, game_map, entities, self.name)
+			self.move_towards(target.x, target.y, game_map, entities)
 		# Delete the path to free memoryview
 		libtcod.path_delete(my_path)
+		
+	def distance(self, x, y):
+		return math.sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
 			
 	def distance_to(self, other):
 		dx = other.x - self.x
