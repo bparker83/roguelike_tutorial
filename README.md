@@ -14,6 +14,7 @@ Up left - y
 Up right - u  
 Down left - b  
 Down right - n  
+Wait (skip turn) - z
 Pickup item - g  
 Drop item - d  
 Open inventory - i  
