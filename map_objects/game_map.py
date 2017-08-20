@@ -165,7 +165,7 @@ class GameMap:
 					item = Entity(x, y, '/', libtcod.sky, 'Sword', equippable=equippable_component)
 				elif item_choice == 'shield':
 					equippable_component = Equippable(EquipmentSlots.OFF_HAND, defense_bonus=1)
-					item = Entity(x, y, '[', libtcod.darker_orange, 'Sword', equippable=equippable_component)
+					item = Entity(x, y, '[', libtcod.darker_orange, 'Shield', equippable=equippable_component)
 				elif item_choice == 'fireball_scroll':
 					item_component = Item(use_function=cast_fireball, targeting=True, targeting_message=Message(
 						'Left-click a target tile for the fireball, or right-click to cancel.', libtcod.light_cyan),
